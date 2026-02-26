@@ -15,6 +15,7 @@ PHONE = os.getenv('PHONE', '')
 TARGET_CHAT = os.getenv('TARGET_CHAT', 'me')  # e.g. me, @your_bot_username, -100xxxxxxxxxx
 SEARCH_TAG = os.getenv('SEARCH_TAG', '#ucloud')
 
+
 if not API_ID or not API_HASH or not PHONE:
     print('Warning: API_ID/API_HASH/PHONE is not fully configured.')
 
