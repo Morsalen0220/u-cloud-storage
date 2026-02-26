@@ -12,3 +12,7 @@ services:
         value: your_api_hash_here
       - key: PHONE
         value: +8801xxxxxxxx
+      - key: TARGET_CHAT
+        value: me
+      - key: SEARCH_TAG
+        value: '#ucloud'

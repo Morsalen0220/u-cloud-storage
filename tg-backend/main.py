@@ -12,6 +12,9 @@ CORS(app)
 API_ID = int(os.getenv('API_ID', '0'))
 API_HASH = os.getenv('API_HASH', '')
 PHONE = os.getenv('PHONE', '')
+TARGET_CHAT = os.getenv('TARGET_CHAT', 'me')  # e.g. me, @your_bot_username, -100xxxxxxxxxx
+SEARCH_TAG = os.getenv('SEARCH_TAG', '#ucloud')
+
 
 if not API_ID or not API_HASH or not PHONE:
     print('Warning: API_ID/API_HASH/PHONE is not fully configured.')
@@ -40,6 +43,8 @@ def home():
             'status': 'active',
             'message': 'Telegram Backend is running',
             'endpoints': ['/upload', '/files', '/download/<message_id>'],
+            'target_chat': TARGET_CHAT,
+            'search_tag': SEARCH_TAG,
         }
     )
 
@@ -63,13 +68,18 @@ def upload_file():
 
         async def upload():
             await ensure_client_started()
-            message = await client.send_file(
-                'me',
-                temp_path,
-                caption=f"📁 {filename}\n📦 {format_size(filesize or len(file_bytes))}",
+            searchable_name = (filename or '').replace(' ', '_')
+            caption = (
+                f"📁 {filename}\n"
+                f"📦 {format_size(filesize or len(file_bytes))}\n"
+                f"{SEARCH_TAG} #{searchable_name}"
             )
-            me = await client.get_me()
-            return {'message_id': message.id, 'download_url': f"https://t.me/c/{me.id}/{message.id}"}
+            message = await client.send_file(
+                TARGET_CHAT,
+                temp_path,
+                caption=caption,
+            )
+            return {'message_id': message.id}
 
         result = run_async(upload())
         return jsonify({'success': True, **result})
@@ -86,9 +96,8 @@ def list_files():
     try:
         async def get_files():
             await ensure_client_started()
-            me = await client.get_me()
             files_list = []
-            async for message in client.iter_messages('me', limit=50):
+            async for message in client.iter_messages(TARGET_CHAT, limit=50):
                 if message.file:
                     files_list.append(
                         {
@@ -98,7 +107,7 @@ def list_files():
                             'size_formatted': format_size(message.file.size),
                             'date': str(message.date),
                             'mime_type': message.file.mime_type,
-                            'download_url': f"https://t.me/c/{me.id}/{message.id}",
+                            'download_ref': f"/download/{message.id}",
                         }
                     )
             return files_list
@@ -115,7 +124,7 @@ def download_file(message_id):
     try:
         async def download():
             await ensure_client_started()
-            message = await client.get_messages('me', ids=message_id)
+            message = await client.get_messages(TARGET_CHAT, ids=message_id)
             if not message or not message.file:
                 return None
 
