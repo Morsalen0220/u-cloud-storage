@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: telegram-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn main:app
+    envVars:
+      - key: API_ID
+        value: 12345
+      - key: API_HASH
+        value: your_api_hash_here
+      - key: PHONE
+        value: +8801xxxxxxxx

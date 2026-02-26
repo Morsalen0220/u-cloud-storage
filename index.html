@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📁 Telegram File Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- হেডার -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>TeleDrive</h1>
+                    <p>Telegram File Manager</p>
+                </div>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalFiles">0</div>
+                    <div class="stat-label">মোট ফাইল</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalFolders">0</div>
+                    <div class="stat-label">ফোল্ডার</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalSize">0 GB</div>
+                    <div class="stat-label">মোট সাইজ</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- টুলবার -->
+        <div class="toolbar">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="ফাইল বা ফোল্ডার খুঁজুন...">
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="showNewFolderModal()">
+                    <i class="fas fa-folder-plus"></i>
+                    নতুন ফোল্ডার
+                </button>
+                <button class="btn btn-success" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-upload"></i>
+                    ফাইল আপলোড
+                </button>
+            </div>
+            <input type="file" id="fileInput" multiple style="display: none;" onchange="handleFileSelect(this)">
+        </div>
+
+        <!-- ব্রেডক্রাম্ব -->
+        <div class="breadcrumb" id="breadcrumb">
+            <span onclick="navigateTo('root')"><i class="fas fa-home"></i> হোম</span>
+        </div>
+
+        <!-- ফাইল/ফোল্ডার গ্রিড -->
+        <div class="file-grid" id="fileGrid">
+            <!-- ডায়নামিকভাবে ফাইল ও ফোল্ডার দেখাবে -->
+        </div>
+
+        <!-- প্রিভিউ মোডাল -->
+        <div class="modal" id="previewModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="previewTitle">ফাইল প্রিভিউ</h3>
+                    <button class="close-btn" onclick="closePreview()">&times;</button>
+                </div>
+                <div class="modal-body" id="previewBody">
+                    <!-- প্রিভিউ কন্টেন্ট -->
+                </div>
+            </div>
+        </div>
+
+        <!-- নিউ ফোল্ডার মোডাল -->
+        <div class="modal" id="folderModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>নতুন ফোল্ডার</h3>
+                    <button class="close-btn" onclick="closeFolderModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="folderName" placeholder="ফোল্ডারের নাম দিন" class="modal-input">
+                    <div class="modal-actions">
+                        <button class="btn btn-secondary" onclick="closeFolderModal()">বাতিল</button>
+                        <button class="btn btn-primary" onclick="createFolder()">তৈরি করুন</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
